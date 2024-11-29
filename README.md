@@ -116,3 +116,17 @@ The visualizations use predefined color palettes:
 NDVI: Green represents healthy vegetation.
 MNDWI: Blue represents water.
 SAVI: Similar to NDVI, highlights vegetation with soil adjustment.
+
+![Nairobi Image](https://github.com/user-attachments/assets/dd449981-b372-4b75-81f5-a4391a86a33f)
+
+
+![ndvi](https://github.com/user-attachments/assets/9012d7d8-b611-48d0-95dd-734d84abe87e)
+
+
+![MNDWI](https://github.com/user-attachments/assets/2d108062-f3de-49dc-a67c-a369ecb7512c)
+
+
+
+![savi](https://github.com/user-attachments/assets/5dfac665-f052-4900-96b8-1dd8524de525)
+
+
