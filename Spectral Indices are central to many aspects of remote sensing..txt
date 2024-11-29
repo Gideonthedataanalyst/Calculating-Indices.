@@ -1,0 +1,40 @@
+var s2 = ee.ImageCollection('COPERNICUS/S2_HARMONIZED');
+var admin2 = ee.FeatureCollection('FAO/GAUL_SIMPLIFIED_500m/2015/level2');
+
+// Filter for Nairobi, Kenya
+var filteredAdmin2 = admin2
+  .filter(ee.Filter.eq('ADM2_NAME', 'Nairobi')) // Update the level 2 name
+  .filter(ee.Filter.eq('ADM1_NAME', 'Nairobi')); // Update the level 1 name
+var geometry = filteredAdmin2.geometry();
+Map.centerObject(geometry);
+
+// Filter Sentinel-2 data
+var filteredS2 = s2.filter(ee.Filter.lt('CLOUDY_PIXEL_PERCENTAGE', 30))
+  .filter(ee.Filter.date('2019-01-01', '2020-01-01'))
+  .filter(ee.Filter.bounds(geometry));
+
+var image = filteredS2.median(); 
+
+// Calculate Normalized Difference Vegetation Index (NDVI)
+var ndvi = image.normalizedDifference(['B8', 'B4']).rename(['ndvi']);
+
+// Calculate Modified Normalized Difference Water Index (MNDWI)
+var mndwi = image.normalizedDifference(['B3', 'B11']).rename(['mndwi']); 
+
+// Calculate Soil-adjusted Vegetation Index (SAVI)
+var savi = image.expression(
+    '1.5 * ((NIR - RED) / (NIR + RED + 0.5))', {
+      'NIR': image.select('B8').multiply(0.0001),
+      'RED': image.select('B4').multiply(0.0001),
+}).rename('savi');
+
+// Visualization Parameters
+var rgbVis = {min: 0.0, max: 3000, bands: ['B4', 'B3', 'B2']};
+var ndviVis = {min:0, max:1, palette: ['white', 'green']};
+var ndwiVis = {min:0, max:0.5, palette: ['white', 'blue']};
+
+// Add layers to the map
+Map.addLayer(image.clip(geometry), rgbVis, 'Image');
+Map.addLayer(mndwi.clip(geometry), ndwiVis, 'mndwi');
+Map.addLayer(savi.clip(geometry), ndviVis, 'savi');
+Map.addLayer(ndvi.clip(geometry), ndviVis, 'ndvi');
